@@ -1,0 +1,5 @@
+.torrent/
+.vscode/
+__pycache__/
+env/
+torrent.pcap
