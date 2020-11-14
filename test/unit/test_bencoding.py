@@ -21,7 +21,7 @@ class TestBencoding(unittest.TestCase):
 
     def test_decode_string(self):
         data = b"4:test"
-        decoded_data = "test"
+        decoded_data = b"test"
 
         result, offset = self.codec.decode_str(data)
         assert result == decoded_data
@@ -63,7 +63,7 @@ class TestBencoding(unittest.TestCase):
 
     def test_decode_list(self):
         data = b"li1ei2e1:3e"
-        decoded_data = [1, 2, "3"]
+        decoded_data = [1, 2, b"3"]
 
         result, offset = self.codec.decode_list(data)
         assert result == decoded_data
@@ -84,7 +84,7 @@ class TestBencoding(unittest.TestCase):
 
     def test_decode_dict(self):
         data = b"d3:keyi1ee"
-        decoded_data = {"key": 1}
+        decoded_data = {b"key": 1}
 
         result, offset = self.codec.decode_dict(data)
         assert result == decoded_data

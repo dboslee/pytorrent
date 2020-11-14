@@ -13,6 +13,7 @@ class BencodeCodec:
             list: self.encode_list,
             int: self.encode_int,
             str: self.encode_str,
+            bytes: self.encode_str
         }
         self.decode_func = {
             b"d": self.decode_dict,
@@ -57,7 +58,10 @@ class BencodeCodec:
 
     def encode_str(self, data: str) -> bytes:
         """Encode a string."""
-        return f"{len(data)}:{data}".encode()
+        if not isinstance(data, bytes):
+            data = data.encode()
+
+        return str(len(data)).encode() + b":" + data
 
     def encode_int(self, value: int) -> bytes:
         """Encode an integer."""
@@ -67,8 +71,6 @@ class BencodeCodec:
         """Encode a dictionary."""
         encoding = b"d"
         for key, value in sorted(data.items()):
-            if not isinstance(key, str):
-                raise ValueError("All keys must be of type str")
             encoding += self.encode_str(key) + self.encode(value)
 
         return encoding + b"e"
@@ -80,12 +82,12 @@ class BencodeCodec:
             encoding += self.encode(value)
         return encoding + b"e"
 
-    def decode_str(self, data: bytes, offset: int = 0) -> str:
+    def decode_str(self, data: bytes, offset: int = 0) -> bytes:
         """Decode a string from a given offset."""
         colon_index = data.index(b":", offset)
         length = int(data[offset:colon_index])
         start_index = colon_index + 1
-        str_value = data[start_index:start_index + length].decode()
+        str_value = data[start_index:start_index + length]
 
         return str_value, start_index + length
 
@@ -100,7 +102,7 @@ class BencodeCodec:
         decoded_dict = {}
         while data[offset:offset+1] != b"e":
             key, offset = self._decode(data, offset)
-            if not isinstance(key, str):
+            if not isinstance(key, bytes):
                 raise Exception
 
             value, offset = self._decode(data, offset)
