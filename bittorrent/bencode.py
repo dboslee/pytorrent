@@ -5,7 +5,7 @@ from typing import (
 )
 
 
-class BencodeCodec:
+class Bencode:
 
     def __init__(self):
         self.encode_func = {
@@ -118,3 +118,6 @@ class BencodeCodec:
             decoded_list.append(value)
 
         return decoded_list, offset + 1
+
+
+bencode = Bencode()

@@ -1,14 +1,12 @@
 import unittest
-import os
-from bittorrent import bencoding
-
-curr_dir = os.path.abspath(os.path.dirname(__file__))
+from common import read_file_bytes
+from bittorrent.bencode import bencode
 
 
-class TestBencoding(unittest.TestCase):
+class TestBencode(unittest.TestCase):
 
     def setUp(self):
-        self.codec = bencoding.BencodeCodec()
+        self.codec = bencode
 
     def test_encode_string(self):
         data = "test"
@@ -94,12 +92,7 @@ class TestBencoding(unittest.TestCase):
         assert result == decoded_data
 
     def test_decode_file(self):
-        data = b""
-        with open(f"{curr_dir}/test1.torrent", "rb") as f:
-            byte = f.read(1)
-            while byte:
-                data += byte
-                byte = f.read(1)
+        data = read_file_bytes("test/files/test1.torrent")
 
         result = self.codec.decode(data)
         assert result is not None
